@@ -979,7 +979,7 @@
         category: "treatment",
         tag: "Treatments & Prices",
         detail: "Manicure (60/75 min)",
-        prompt: "What is the price of 'Manicure' (60/75 min)?",
+        prompt: "What is the price of Manicure (60/75 min), with or without normal polish? Gel polish removal is not offered.",
         answer: "75/85 CHF",
         accepted: ["75/85", "75/85 chf", "75 / 85", "75 / 85 chf"],
         options: ["75/85 CHF", "95/105 CHF", "65/75 CHF", "80/95 CHF"],
@@ -990,7 +990,7 @@
         category: "treatment",
         tag: "Treatments & Prices",
         detail: "Pedicure (60/75 min)",
-        prompt: "What is the price of 'Pedicure' (60/75 min)?",
+        prompt: "What is the price of Pedicure (60/75 min), with or without normal polish? Gel polish removal is not offered.",
         answer: "95/105 CHF",
         accepted: ["95/105", "95/105 chf", "95 / 105", "95 / 105 chf"],
         options: ["95/105 CHF", "75/85 CHF", "85/95 CHF", "90/110 CHF"],
@@ -1089,11 +1089,11 @@
         category: "hours",
         tag: "Opening Hours & Rules",
         detail: "Indoor Pool & Fitness",
-        prompt: "What are the opening hours of 'Hallenbad & Fitness / Indoor Pool & Fitness'?",
+        prompt: "What are the opening hours of the 'Hallenbad & Fitness / Indoor Pool & Fitness' for members and hotel guests? External guests can enter from 09:30.",
         answer: "07:00–21:00",
         accepted: ["07:00-21:00", "7:00-21:00", "07:00 - 21:00", "7:00 - 21:00"],
         options: ["07:00–21:00", "08:30–21:00", "09:30–20:30", "08:00–20:00"],
-        hint: "Opens at 07:00 and stays open until 21:00."
+        hint: "Members and hotel guests: 07:00–21:00. External guests: entry from 09:30."
       },
       {
         id: "h6",
@@ -1111,11 +1111,11 @@
         category: "hours",
         tag: "Opening Hours & Rules",
         detail: "Age Limit (16+)",
-        prompt: "Which two spa areas are strictly restricted to guests aged 16 and older (16+)?",
-        answer: "Sole Pool & Sauna",
-        accepted: ["sole pool & sauna", "sole pool and sauna", "sauna and sole pool", "sauna & sole pool"],
-        options: ["Sole Pool & Sauna", "Indoor Pool & Sauna", "Sole Pool & Fitness", "All spa areas"],
-        hint: "Children are allowed in the Indoor Pool, but NOT in the Sole Pool or Sauna."
+        prompt: "Which spa areas are strictly restricted to guests aged 16 and older (16+)?",
+        answer: "Sauna & Sole Pool & Fitness",
+        accepted: ["sauna & sole pool & fitness", "sauna and sole pool and fitness", "sole pool, sauna & fitness", "sole pool sauna fitness"],
+        options: ["Sauna & Sole Pool & Fitness", "Indoor Pool & Fitness", "Sole Pool & Indoor Pool", "All spa areas"],
+        hint: "Remember the 16+ restriction applies to the Sauna, Sole Pool and Fitness."
       }
     ];
 
@@ -1139,8 +1139,8 @@
       { name: "Red Light Photobiomodulation", duration: "15/20 min", price: "50 CHF" },
       { name: "Red Light + Recovery Boost Massage", duration: "45 min", price: "135 CHF" },
       { name: "Red Light + Recovery Full Body Boost Massage", duration: "70 min", price: "180 CHF" },
-      { name: "Manicure", duration: "60/75 min", price: "75/85 CHF" },
-      { name: "Pedicure", duration: "60/75 min", price: "95/105 CHF" },
+      { name: "Manicure (with or without normal polish; gel removal not offered)", duration: "60/75 min", price: "75/85 CHF" },
+      { name: "Pedicure (with or without normal polish; gel removal not offered)", duration: "60/75 min", price: "95/105 CHF" },
       { name: "Waxing", duration: "15/75 min", price: "25/90 CHF" },
       { name: "Augenbrauen formen / Eyebrow Shaping", duration: "—", price: "25 CHF" },
       { name: "Augenbrauen färben / Eyebrow Tinting", duration: "—", price: "25 CHF" },
@@ -1152,7 +1152,7 @@
       { area: "Externe Gäste / External guests", hours: "09:30–20:30", note: "" },
       { area: "Behandlungen / Treatments", hours: "10:00–19:00", note: "" },
       { area: "Solepool / Sole Pool", hours: "08:30–21:00", note: "16+ only" },
-      { area: "Hallenbad & Fitness / Indoor Pool & Fitness", hours: "07:00–21:00", note: "" },
+      { area: "Hallenbad & Fitness / Indoor Pool & Fitness", hours: "07:00–21:00", note: "Members & hotel guests; external guests from 09:30" },
       { area: "Sauna", hours: "10:30–20:00", note: "16+ only" }
     ];
 
