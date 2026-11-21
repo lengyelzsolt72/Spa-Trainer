@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Mira Spa – Price &amp; Opening Hours Quiz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Fallback styling so layout remains clean even offline without Tailwind CDN */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f1ea;
+      color: #1e293b;
+      line-height: 1.5;
+    }
+    .option-card {
+      transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease, background-color 0.14s ease;
+      cursor: pointer;
+    }
+    .option-card:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -8px rgba(15, 23, 42, 0.14);
+    }
+    .option-card:disabled {
+      cursor: default;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#f4f1ea] text-[#1e293b]">
+  <!-- Top Bar -->
+  <header class="bg-[#1b2e2b] text-[#f4f1ea] border-b border-[#2c4742] sticky top-0 z-20">
+    <div class="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-[#c59b5f] text-[#1b2e2b] font-extrabold flex items-center justify-center text-xs shadow-sm tracking-tight">
+          SPA
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight leading-tight">La Mira Spa – Staff Trainer</h1>
+          <p class="text-xs text-[#b8c7c4]">Treatments, CHF Prices, Add-ons &amp; Opening Hours</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="toggle-menu-btn" type="button" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-[#28423d] hover:bg-[#33544e] text-[#f4f1ea] border border-[#3d635c] transition">
+          Full Reference Menu
+        </button>
+        <button id="restart-header-btn" type="button" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-[#c59b5f] hover:bg-[#d4ab6e] text-[#1b2e2b] transition">
+          New Round
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6 sm:py-8">
+    <!-- Controls & Stats Banner -->
+    <section class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-[#e6e0d4] mb-6 space-y-4">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <!-- Category Filters -->
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#8a6836]">Category Filter</span>
+          <div class="mt-2 flex flex-wrap gap-2" id="category-buttons">
+            <button data-cat="all" id="cat-all-btn" type="button" class="cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#1b2e2b] text-white">
+              All Items (38)
+            </button>
+            <button data-cat="prices" id="cat-prices-btn" type="button" class="cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#f4f1ea] text-[#1e293b] hover:bg-[#eae4d7]">
+              Treatments &amp; Prices (31)
+            </button>
+            <button data-cat="hours" id="cat-hours-btn" type="button" class="cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#f4f1ea] text-[#1e293b] hover:bg-[#eae4d7]">
+              Opening Hours &amp; Rules (7)
+            </button>
+            <button data-cat="missed" id="missed-filter-btn" type="button" class="cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#f4f1ea] text-[#1e293b] hover:bg-[#eae4d7]">
+              Missed Items Review (0)
+            </button>
+          </div>
+        </div>
+
+        <!-- Answer Format Mode, Deck Length & Score -->
+        <div class="flex flex-wrap items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 pt-3 lg:pt-0 border-[#efeae0]">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#8a6836] block mb-1.5">Deck Size</span>
+            <div class="inline-flex rounded-xl bg-[#f4f1ea] p-1 border border-[#e6e0d4]">
+              <button data-size="full" type="button" class="size-btn px-3 py-1 rounded-lg text-xs font-bold bg-white text-[#1b2e2b] shadow-sm">
+                Full Deck (All)
+              </button>
+              <button data-size="quick" type="button" class="size-btn px-3 py-1 rounded-lg text-xs font-bold text-slate-600 hover:text-[#1b2e2b]">
+                Quick 15
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#8a6836] block mb-1.5">Quiz Mode</span>
+            <div class="inline-flex rounded-xl bg-[#f4f1ea] p-1 border border-[#e6e0d4]">
+              <button data-mode="mc" type="button" class="mode-btn px-3 py-1 rounded-lg text-xs font-bold bg-white text-[#1b2e2b] shadow-sm">
+                Multiple Choice
+              </button>
+              <button data-mode="type" type="button" class="mode-btn px-3 py-1 rounded-lg text-xs font-bold text-slate-600 hover:text-[#1b2e2b]">
+                Type the Answer
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 text-right">
+            <div>
+              <div class="text-xs text-slate-500">Score</div>
+              <div id="live-score" class="text-xl font-extrabold text-[#1b2e2b]">0 / 38</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500">Streak</div>
+              <div id="live-streak" class="text-xl font-extrabold text-[#b47b2b]">0 🔥</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div>
+        <div class="flex justify-between text-xs text-slate-500 mb-1.5">
+          <span id="progress-label">Question 1 / 38</span>
+          <span id="category-badge" class="font-semibold text-[#1b2e2b]">Category</span>
+        </div>
+        <div class="w-full h-2.5 bg-[#efeae0] rounded-full overflow-hidden">
+          <div id="progress-bar" class="h-full bg-[#c59b5f] transition-all duration-300" style="width: 3%;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiz Card -->
+    <section id="quiz-container" class="bg-white rounded-2xl p-5 sm:p-7 shadow-sm border border-[#e6e0d4]">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span id="question-meta" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#f4f1ea] text-[#1b2e2b]">
+          Category
+        </span>
+        <span id="question-submeta" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#faf6ee] text-[#8a6836] border border-[#ecdcc0]">
+          Details
+        </span>
+      </div>
+
+      <h2 id="question-text" class="text-lg sm:text-xl font-bold text-[#1e293b] leading-snug mb-5">
+        Loading question...
+      </h2>
+
+      <!-- Multiple Choice Container -->
+      <div id="options-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
+
+      <!-- Type Answer Container -->
+      <form id="type-form" class="hidden space-y-3">
+        <label for="type-input" id="type-label" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Enter exact price (e.g., 195 CHF) or opening hours (e.g., 08:30-21:00)
+        </label>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input
+            id="type-input"
+            type="text"
+            autocomplete="off"
+            placeholder="Type your answer here..."
+            class="flex-1 px-4 py-3 rounded-xl border-2 border-[#dcd4c4] bg-[#fcfbf8] text-base font-semibold text-[#1e293b] focus:outline-none focus:border-[#1b2e2b]"
+          />
+          <button
+            id="type-submit-btn"
+            type="submit"
+            class="px-6 py-3 rounded-xl text-sm font-bold bg-[#c59b5f] hover:bg-[#d4ab6e] text-[#1b2e2b] transition shrink-0"
+          >
+            Check Answer
+          </button>
+        </div>
+      </form>
+
+      <!-- Feedback Box -->
+      <div id="feedback-box" class="hidden mt-6 p-4 sm:p-5 rounded-xl border">
+        <div class="flex items-start gap-3">
+          <div id="feedback-icon" class="text-xl leading-none mt-0.5"></div>
+          <div class="flex-1">
+            <div id="feedback-title" class="font-bold text-sm sm:text-base"></div>
+            <p id="feedback-rationale" class="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="mt-6 pt-4 border-t border-[#efeae0] flex items-center justify-between gap-3">
+        <button id="hint-btn" type="button" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[#8a6836] bg-[#faf6ee] hover:bg-[#f2ead9] border border-[#e5d8be] transition">
+          💡 Show Hint
+        </button>
+        <button id="next-btn" type="button" disabled class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#1b2e2b] text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#27413d] transition">
+          Next Question →
+        </button>
+      </div>
+      <p id="hint-text" class="hidden mt-3 text-xs sm:text-sm italic text-[#6e5227] bg-[#fdf9f0] px-3.5 py-2 rounded-lg border border-[#f0e4ca]"></p>
+    </section>
+
+    <!-- Summary Card -->
+    <section id="summary-container" class="hidden bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-[#e6e0d4] text-center">
+      <div class="w-16 h-16 rounded-2xl bg-[#1b2e2b] text-[#c59b5f] text-2xl font-extrabold flex items-center justify-center mx-auto mb-4">
+        ✓
+      </div>
+      <h2 class="text-2xl font-extrabold text-[#1e293b]">Round Complete!</h2>
+      <p id="summary-score" class="text-base text-slate-600 mt-2">Your Score: 0 / 0</p>
+      <p id="summary-message" class="text-sm text-[#8a6836] font-semibold mt-1"></p>
+
+      <div id="review-list" class="mt-6 text-left space-y-2.5 max-h-80 overflow-y-auto pr-1"></div>
+
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <button id="retry-wrong-btn" type="button" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-[#f4f1ea] hover:bg-[#e8e2d5] text-[#1e293b] border border-[#dcd4c4] transition">
+          Practice Missed Items
+        </button>
+        <button id="play-again-btn" type="button" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-[#c59b5f] hover:bg-[#d3aa6d] text-[#1b2e2b] transition">
+          Start New Round
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Full Reference Menu Modal -->
+  <div id="menu-modal" class="hidden fixed inset-0 z-30 bg-black/50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-xl border border-[#e6e0d4]">
+      <div class="px-5 py-4 border-b border-[#efeae0] flex items-center justify-between gap-3">
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-[#1e293b]">La Mira Spa – Complete Reference Menu</h3>
+          <p class="text-xs text-slate-500">All 25 Treatments &amp; 6 Opening Hour / Guest Access Rules</p>
+        </div>
+        <button id="close-menu-btn" type="button" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#f4f1ea] hover:bg-[#e6e0d4] text-[#1e293b]">
+          Close ✕
+        </button>
+      </div>
+
+      <!-- Modal Tabs & Search -->
+      <div class="px-5 pt-3 pb-2.5 border-b border-[#efeae0] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-[#fcfbf8]">
+        <div class="flex gap-2">
+          <button id="tab-treatments-btn" type="button" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-t-xl border-b-2 border-[#1b2e2b] text-[#1b2e2b]">
+            Treatments &amp; Prices (25)
+          </button>
+          <button id="tab-hours-btn" type="button" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-t-xl border-b-2 border-transparent text-slate-500 hover:text-[#1b2e2b]">
+            Opening Hours &amp; Rules (6)
+          </button>
+        </div>
+        <input
+          id="menu-search-input"
+          type="text"
+          placeholder="Search treatment, price, or hours..."
+          class="px-3 py-1.5 rounded-lg border border-[#dcd4c4] bg-white text-xs sm:text-sm text-[#1e293b] focus:outline-none focus:border-[#1b2e2b] w-full sm:w-64"
+        />
+      </div>
+
+      <div class="p-4 sm:p-5 overflow-y-auto text-xs sm:text-sm space-y-2.5" id="menu-modal-content"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      window.onerror = function (msg, url, line) {
+        var qEl = document.getElementById("question-text");
+        if (qEl && qEl.textContent === "Loading question...") {
+          qEl.textContent = "Error loading quiz (" + msg + " at line " + line + "). Please reload.";
+        }
+        return false;
+      };
+
+      var TREATMENTS_MENU = [
+        { name: "La Mira Signature Ritual", duration: "70 min", price: "195 CHF" },
+        { name: "Anti-Aging Korrekturbehandlung - Hoher Toleranz / Anti-Aging Correction Treatment - High Tolerance", duration: "80 min", price: "220 CHF (+ Oxygen serum: +20 CHF)" },
+        { name: "Anti-Aging-Präventivpflege - Entschlankend / Anti-Aging Preventive Care Treatment - Purifying", duration: "80 min", price: "220 CHF (+ Oxygen serum: +20 CHF)" },
+        { name: "Anti-Aging Präventive Pflegebehandlung - Feuchtigkeitsspendend / Anti-Aging Preventive Care Treatment - Moisturizing", duration: "50 min", price: "160 CHF (+ Oxygen serum: +20 CHF)" },
+        { name: "Anti-Aging Korrigierende Augenbehandlung - Renovation / Anti-Aging Corrective Eye Treatment - Renovation", duration: "30 min", price: "110 CHF" },
+        { name: "Signature Better-Aging Massage", duration: "80 min", price: "240 CHF" },
+        { name: "Signature Sports Massage", duration: "50/80 min", price: "160/230 CHF" },
+        { name: "Individuell / Individual", duration: "50/70 min", price: "130/175 CHF" },
+        { name: "Rücken Intensiv / Back intensive", duration: "50 min", price: "120 CHF" },
+        { name: "Fussmassage / Foot massage", duration: "50 min", price: "130 CHF" },
+        { name: "Lymphdrainage / Lymphatic drainage", duration: "70 min", price: "185 CHF" },
+        { name: "Hot Stone", duration: "70 min", price: "185 CHF" },
+        { name: "Kopf- und Gesichtsmassage / Head and face massage", duration: "40 min", price: "100 CHF" },
+        { name: "Relax", duration: "50/70 min", price: "120/170 CHF" },
+        { name: "Body Refresh", duration: "30 min", price: "80 CHF" },
+        { name: "Body Aroma", duration: "70 min", price: "185 CHF" },
+        { name: "Red Light Photobiomodulation", duration: "15/20 min", price: "50 CHF" },
+        { name: "Red Light + Recovery Boost Massage", duration: "45 min", price: "135 CHF" },
+        { name: "Red Light + Recovery Full Body Boost Massage", duration: "70 min", price: "180 CHF" },
+        { name: "Manicure", duration: "60/75 min", price: "75/85 CHF" },
+        { name: "Pedicure", duration: "60/75 min", price: "95/105 CHF" },
+        { name: "Waxing", duration: "15/75 min", price: "25/90 CHF" },
+        { name: "Augenbrauen formen / Eyebrow shaping", duration: "–", price: "25 CHF" },
+        { name: "Augenbrauen färben / Eyebrow tinting", duration: "–", price: "25 CHF" },
+        { name: "Wimpern färben / Eyelash tinting", duration: "–", price: "35 CHF" }
+      ];
+
+      var HOURS_MENU = [
+        { area: "Täglich geöffnet / Daily open", hours: "Open daily", note: "Operating schedule across the week", restricted: false },
+        { area: "Externe Gäste / External guests", hours: "09:30–20:30", note: "Day spa access window for non-hotel guests", restricted: false },
+        { area: "Behandlungen / Treatments", hours: "10:00–19:00", note: "Spa treatment appointment hours", restricted: false },
+        { area: "Solepool / Sole Pool", hours: "08:30–21:00", note: "16+ only (ages 16 and over)", restricted: true },
+        { area: "Hallenbad & Fitness / Indoor Pool & Fitness", hours: "07:00–21:00", note: "Earliest opening facility (07:00)", restricted: false },
+        { area: "Sauna", hours: "10:30–20:00", note: "16+ only (ages 16 and over)", restricted: true }
+      ];
+
+      // 38 Questions total: 31 Treatments & Prices + 7 Opening Hours & Rules
+      var QUESTION_BANK = [
+        // --- OPENING HOURS & RULES (7) ---
+        {
+          id: "hr-daily-open",
+          category: "hours",
+          badge: "Opening Hours & Rules",
+          submeta: "General Schedule",
+          inputType: "text",
+          question: "When is La Mira Spa open according to 'Täglich geöffnet / Daily open'?",
+          correctAnswer: "Open daily (7 days a week)",
+          acceptedAnswers: ["open daily", "daily", "every day", "7 days a week", "everyday"],
+          options: ["Open daily (7 days a week)", "Closed on Mondays", "Weekends only (Fri–Sun)", "Closed on Tuesdays"],
+          hint: "Täglich geöffnet translates directly to open every day.",
+          explanation: "La Mira Spa is open daily (Täglich geöffnet / Daily open)."
+        },
+        {
+          id: "hr-external-guests",
+          category: "hours",
+          badge: "Opening Hours & Rules",
+          submeta: "Guest Access Window",
+          inputType: "hours",
+          question: "What are the opening hours for 'Externe Gäste / External guests'?",
+          correctAnswer: "09:30 - 20:30",
+          acceptedAnswers: ["09:30-20:30", "9:30-20:30"],
+          options: ["09:30 - 20:30", "08:30 - 21:00", "10:00 - 19:00", "07:00 - 21:00"],
+          hint: "External guests may enter starting at 09:30 and stay until 20:30.",
+          explanation: "External guests (Externe Gäste) are welcome from 09:30 to 20:30."
+        },
+        {
+          id: "hr-treatments",
+          category: "hours",
+          badge: "Opening Hours & Rules",
+          submeta: "Appointment Hours",
+          inputType: "hours",
+          question: "During what hours are 'Behandlungen / Treatments' offered?",
+          correctAnswer: "10:00 - 19:00",
+          acceptedAnswers: ["10:00-19:00"],
+          options: ["10:00 - 19:00", "09:30 - 20:30", "10:30 - 20:00", "08:30 - 21:00"],
+          hint: "Treatments run from 10:00 in the morning until 19:00 in the evening.",
+          explanation: "Spa treatments (Behandlungen / Treatments) take place between 10:00 and 19:00."
+        },
+        {
+          id: "hr-solepool-hours",
+          category: "hours",
+          badge: "Opening Hours & Rules",
+          submeta: "16+ Only • Facility Hours",
+          inputType: "hours",
+          question: "What are the opening hours for 'Solepool / Sole Pool'?",
+          correctAnswer: "08:30 - 21:00",
+          acceptedAnswers: ["08:30-21:00", "8:30-21:00"],
+          options: ["08:30 - 21:00", "07:00 - 21:00", "09:30 - 20:30", "10:30 - 20:00"],
+          hint: "Opens 1.5 hours after the Indoor Pool (07:00) and closes at 21:00.",
+          explanation: "Solepool / Sole Pool is open 08:30 - 21:00 (for guests aged 16+ only)."
+        },
+        {
+          id: "hr-solepool-age",
+          category: "hours",
+          badge: "Opening Hours & Rules",
+          submeta: "Guest Age Restriction",
+          inputType: "text",
+          question: "Which two spa facilities have the '16+ only (ages 16 and over)' restriction?",
+          correctAnswer: "Sole Pool & Sauna",
+          acceptedAnswers: ["sole pool & sauna", "sole pool and sauna", "solepool & sauna", "solepool and sauna"],
+          options: ["Sole Pool & Sauna", "Indoor Pool & Fitness", "Sole Pool & Indoor Pool", "Sauna & Treatments"],
+          hint: "Children under 16 can use the Indoor Pool, but not the brine pool or heat area.",
+          explanation: "Both Solepool / Sole Pool and Sauna are restricted to guests aged 16 and over."
+        },
+        {
+          id: "hr-indoor-pool",
+          category: "hours",
+          badge: "Opening Hours & Rules",
+          submeta: "Earliest Opening Facility",
+          inputType: "hours",
+          question: "What are the opening hours for 'Hallenbad & Fitness / Indoor Pool & Fitness'?",
+          correctAnswer: "07:00 - 21:00",
+          acceptedAnswers: ["07:00-21:00", "7:00-21:00"],
+          options: ["07:00 - 21:00", "08:30 - 21:00", "09:30 - 20:30", "10:00 - 19:00"],
+          hint: "This is the earliest opening area in the morning (07:00) and closes at 21:00.",
+          explanation: "Hallenbad & Fitness / Indoor Pool & Fitness is open 07:00 - 21:00."
+        },
+        {
+          id: "hr-sauna",
+          category: "hours",
+          badge: "Opening Hours & Rules",
+          submeta: "16+ Only • Facility Hours",
+          inputType: "hours",
+          question: "What are the opening hours for 'Sauna' (16+ only)?",
+          correctAnswer: "10:30 - 20:00",
+          acceptedAnswers: ["10:30-20:00"],
+          options: ["10:30 - 20:00", "10:00 - 19:00", "09:30 - 20:30", "08:30 - 21:00"],
+          hint: "Opens at 10:30 and closes at 20:00 (half an hour before external guests leave).",
+          explanation: "Sauna is open 10:30 - 20:00 and is restricted to guests aged 16+."
+        },
+
+        // --- TREATMENTS & PRICES (31) ---
+        {
+          id: "pr-signature-ritual",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "70 min",
+          inputType: "price",
+          question: "What is the price of 'La Mira Signature Ritual' (70 min)?",
+          correctAnswer: "195 CHF",
+          acceptedAnswers: ["195"],
+          options: ["195 CHF", "185 CHF", "220 CHF", "240 CHF"],
+          hint: "10 CHF higher than the 70-minute 185 CHF treatments (Hot Stone / Body Aroma).",
+          explanation: "La Mira Signature Ritual (70 min) is priced at 195 CHF."
+        },
+        {
+          id: "pr-aa-high-tol-base",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "80 min • Base Price",
+          inputType: "price",
+          question: "What is the base price (without Oxygen serum) for 'Anti-Aging Korrekturbehandlung - Hoher Toleranz / Anti-Aging Correction Treatment - High Tolerance' (80 min)?",
+          correctAnswer: "220 CHF",
+          acceptedAnswers: ["220"],
+          options: ["220 CHF", "240 CHF", "195 CHF", "160 CHF"],
+          hint: "Both 80-minute Anti-Aging treatments cost 220 CHF before the +20 CHF Oxygen serum.",
+          explanation: "Anti-Aging Correction Treatment - High Tolerance (80 min) has a base price of 220 CHF (+20 CHF for Oxygen serum)."
+        },
+        {
+          id: "pr-aa-high-tol-addon",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "80 min + Oxygen Serum (+20 CHF)",
+          inputType: "price",
+          question: "What is the total price for 'Anti-Aging Korrekturbehandlung - Hoher Toleranz / Anti-Aging Correction Treatment - High Tolerance' (80 min) INCLUDING the Oxygen serum add-on?",
+          correctAnswer: "240 CHF",
+          acceptedAnswers: ["240"],
+          options: ["240 CHF", "220 CHF", "180 CHF", "250 CHF"],
+          hint: "Base price is 220 CHF plus +20 CHF for the Oxygen serum.",
+          explanation: "220 CHF base price + 20 CHF Oxygen serum add-on = 240 CHF total."
+        },
+        {
+          id: "pr-aa-purifying-base",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "80 min • Base Price",
+          inputType: "price",
+          question: "What is the base price (without Oxygen serum) for 'Anti-Aging-Präventivpflege - Entschlankend / Anti-Aging Preventive Care Treatment - Purifying' (80 min)?",
+          correctAnswer: "220 CHF",
+          acceptedAnswers: ["220"],
+          options: ["220 CHF", "240 CHF", "160 CHF", "195 CHF"],
+          hint: "Both 80-minute Anti-Aging facials share the 220 CHF base price.",
+          explanation: "Anti-Aging Preventive Care Treatment - Purifying (80 min) has a base price of 220 CHF (+20 CHF for Oxygen serum)."
+        },
+        {
+          id: "pr-aa-purifying-addon",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "80 min + Oxygen Serum (+20 CHF)",
+          inputType: "price",
+          question: "What is the total price for 'Anti-Aging-Präventivpflege - Entschlankend / Anti-Aging Preventive Care Treatment - Purifying' (80 min) INCLUDING the Oxygen serum add-on?",
+          correctAnswer: "240 CHF",
+          acceptedAnswers: ["240"],
+          options: ["240 CHF", "220 CHF", "180 CHF", "260 CHF"],
+          hint: "Base price is 220 CHF plus +20 CHF for the Oxygen serum.",
+          explanation: "220 CHF base price + 20 CHF Oxygen serum add-on = 240 CHF total."
+        },
+        {
+          id: "pr-aa-moisturizing-base",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "50 min • Base Price",
+          inputType: "price",
+          question: "What is the base price (without Oxygen serum) for 'Anti-Aging Präventive Pflegebehandlung - Feuchtigkeitsspendend / Anti-Aging Preventive Care Treatment - Moisturizing' (50 min)?",
+          correctAnswer: "160 CHF",
+          acceptedAnswers: ["160"],
+          options: ["160 CHF", "180 CHF", "220 CHF", "130 CHF"],
+          hint: "50 minutes costs 160 CHF before adding the +20 CHF Oxygen serum.",
+          explanation: "Anti-Aging Preventive Care Treatment - Moisturizing (50 min) has a base price of 160 CHF (+20 CHF for Oxygen serum)."
+        },
+        {
+          id: "pr-aa-moisturizing-addon",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "50 min + Oxygen Serum (+20 CHF)",
+          inputType: "price",
+          question: "What is the total price for 'Anti-Aging Präventive Pflegebehandlung - Feuchtigkeitsspendend / Anti-Aging Preventive Care Treatment - Moisturizing' (50 min) INCLUDING the Oxygen serum add-on?",
+          correctAnswer: "180 CHF",
+          acceptedAnswers: ["180"],
+          options: ["180 CHF", "160 CHF", "240 CHF", "200 CHF"],
+          hint: "The 50-minute base price is 160 CHF, and Oxygen serum adds +20 CHF.",
+          explanation: "160 CHF base price + 20 CHF Oxygen serum add-on = 180 CHF total."
+        },
+        {
+          id: "pr-aa-eye-renovation",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "30 min",
+          inputType: "price",
+          question: "What is the price of 'Anti-Aging Korrigierende Augenbehandlung - Renovation / Anti-Aging Corrective Eye Treatment - Renovation' (30 min)?",
+          correctAnswer: "110 CHF",
+          acceptedAnswers: ["110"],
+          options: ["110 CHF", "100 CHF", "120 CHF", "80 CHF"],
+          hint: "30-minute specialized eye treatment priced at 110 CHF.",
+          explanation: "Anti-Aging Corrective Eye Treatment - Renovation (30 min) is 110 CHF."
+        },
+        {
+          id: "pr-better-aging",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "80 min",
+          inputType: "price",
+          question: "What is the price of 'Signature Better-Aging Massage' (80 min)?",
+          correctAnswer: "240 CHF",
+          acceptedAnswers: ["240"],
+          options: ["240 CHF", "230 CHF", "220 CHF", "195 CHF"],
+          hint: "This is the highest-priced single massage on the menu (10 CHF above the 80-min Sports Massage).",
+          explanation: "Signature Better-Aging Massage (80 min) is 240 CHF."
+        },
+        {
+          id: "pr-sports-50",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "50 min option",
+          inputType: "price",
+          question: "What is the price of 'Signature Sports Massage' for the 50-minute duration?",
+          correctAnswer: "160 CHF",
+          acceptedAnswers: ["160"],
+          options: ["160 CHF", "230 CHF", "130 CHF", "175 CHF"],
+          hint: "Signature Sports Massage is priced at 160/230 CHF for 50/80 min.",
+          explanation: "The 50-minute Signature Sports Massage is 160 CHF (while the 80-minute option is 230 CHF)."
+        },
+        {
+          id: "pr-sports-80",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "80 min option",
+          inputType: "price",
+          question: "What is the price of 'Signature Sports Massage' for the 80-minute duration?",
+          correctAnswer: "230 CHF",
+          acceptedAnswers: ["230"],
+          options: ["230 CHF", "160 CHF", "240 CHF", "220 CHF"],
+          hint: "Signature Sports Massage is priced at 160/230 CHF for 50/80 min.",
+          explanation: "The 80-minute Signature Sports Massage is 230 CHF (10 CHF less than the 80-min Better-Aging Massage)."
+        },
+        {
+          id: "pr-individual-50",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "50 min option",
+          inputType: "price",
+          question: "What is the price of 'Individuell / Individual' massage for 50 minutes?",
+          correctAnswer: "130 CHF",
+          acceptedAnswers: ["130"],
+          options: ["130 CHF", "175 CHF", "120 CHF", "160 CHF"],
+          hint: "Individuell / Individual is 130/175 CHF for 50/70 min.",
+          explanation: "The 50-minute Individuell / Individual massage is 130 CHF (70 min is 175 CHF)."
+        },
+        {
+          id: "pr-individual-70",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "70 min option",
+          inputType: "price",
+          question: "What is the price of 'Individuell / Individual' massage for 70 minutes?",
+          correctAnswer: "175 CHF",
+          acceptedAnswers: ["175"],
+          options: ["175 CHF", "130 CHF", "170 CHF", "185 CHF"],
+          hint: "5 CHF higher than the 70-minute Relax massage (170 CHF).",
+          explanation: "The 70-minute Individuell / Individual massage is 175 CHF."
+        },
+        {
+          id: "pr-back-intensive",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "50 min",
+          inputType: "price",
+          question: "What is the price of 'Rücken Intensiv / Back intensive' (50 min)?",
+          correctAnswer: "120 CHF",
+          acceptedAnswers: ["120"],
+          options: ["120 CHF", "130 CHF", "100 CHF", "135 CHF"],
+          hint: "Same price as the 50-minute Relax massage.",
+          explanation: "Rücken Intensiv / Back intensive (50 min) costs 120 CHF."
+        },
+        {
+          id: "pr-foot-massage",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "50 min",
+          inputType: "price",
+          question: "What is the price of 'Fussmassage / Foot massage' (50 min)?",
+          correctAnswer: "130 CHF",
+          acceptedAnswers: ["130"],
+          options: ["130 CHF", "120 CHF", "100 CHF", "110 CHF"],
+          hint: "Same price as the 50-minute Individuell / Individual massage.",
+          explanation: "Fussmassage / Foot massage (50 min) is 130 CHF."
+        },
+        {
+          id: "pr-lymphatic",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "70 min",
+          inputType: "price",
+          question: "What is the price of 'Lymphdrainage / Lymphatic drainage' (70 min)?",
+          correctAnswer: "185 CHF",
+          acceptedAnswers: ["185"],
+          options: ["185 CHF", "195 CHF", "180 CHF", "175 CHF"],
+          hint: "Lymphdrainage, Hot Stone, and Body Aroma are all 70 min and share this price.",
+          explanation: "Lymphdrainage / Lymphatic drainage (70 min) is 185 CHF."
+        },
+        {
+          id: "pr-hot-stone",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "70 min",
+          inputType: "price",
+          question: "What is the price of 'Hot Stone' massage (70 min)?",
+          correctAnswer: "185 CHF",
+          acceptedAnswers: ["185"],
+          options: ["185 CHF", "195 CHF", "175 CHF", "180 CHF"],
+          hint: "Same 185 CHF price tier as Body Aroma and Lymphdrainage.",
+          explanation: "Hot Stone (70 min) costs 185 CHF."
+        },
+        {
+          id: "pr-head-face",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "40 min",
+          inputType: "price",
+          question: "What is the price of 'Kopf- und Gesichtsmassage / Head and face massage' (40 min)?",
+          correctAnswer: "100 CHF",
+          acceptedAnswers: ["100"],
+          options: ["100 CHF", "80 CHF", "110 CHF", "120 CHF"],
+          hint: "A clean round number of 100 CHF for 40 minutes.",
+          explanation: "Kopf- und Gesichtsmassage / Head and face massage (40 min) is 100 CHF."
+        },
+        {
+          id: "pr-relax-50",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "50 min option",
+          inputType: "price",
+          question: "What is the price of 'Relax' massage for 50 minutes?",
+          correctAnswer: "120 CHF",
+          acceptedAnswers: ["120"],
+          options: ["120 CHF", "170 CHF", "130 CHF", "110 CHF"],
+          hint: "Relax is priced at 120/170 CHF for 50/70 min.",
+          explanation: "The 50-minute Relax massage is 120 CHF (70 min is 170 CHF)."
+        },
+        {
+          id: "pr-relax-70",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "70 min option",
+          inputType: "price",
+          question: "What is the price of 'Relax' massage for 70 minutes?",
+          correctAnswer: "170 CHF",
+          acceptedAnswers: ["170"],
+          options: ["170 CHF", "120 CHF", "175 CHF", "185 CHF"],
+          hint: "Relax is priced at 120/170 CHF for 50/70 min.",
+          explanation: "The 70-minute Relax massage is 170 CHF."
+        },
+        {
+          id: "pr-body-refresh",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "30 min",
+          inputType: "price",
+          question: "What is the price of 'Body Refresh' (30 min)?",
+          correctAnswer: "80 CHF",
+          acceptedAnswers: ["80"],
+          options: ["80 CHF", "100 CHF", "75 CHF", "110 CHF"],
+          hint: "30-minute body treatment priced at 80 CHF.",
+          explanation: "Body Refresh (30 min) is 80 CHF."
+        },
+        {
+          id: "pr-body-aroma",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "70 min",
+          inputType: "price",
+          question: "What is the price of 'Body Aroma' (70 min)?",
+          correctAnswer: "185 CHF",
+          acceptedAnswers: ["185"],
+          options: ["185 CHF", "195 CHF", "180 CHF", "170 CHF"],
+          hint: "Matches the 185 CHF price of Hot Stone and Lymphdrainage.",
+          explanation: "Body Aroma (70 min) costs 185 CHF."
+        },
+        {
+          id: "pr-redlight-photo",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "15/20 min",
+          inputType: "price",
+          question: "What is the price of 'Red Light Photobiomodulation' (15/20 min)?",
+          correctAnswer: "50 CHF",
+          acceptedAnswers: ["50"],
+          options: ["50 CHF", "35 CHF", "80 CHF", "25 CHF"],
+          hint: "Both 15 and 20 minutes share a single flat price of 50 CHF.",
+          explanation: "Red Light Photobiomodulation (15/20 min) is 50 CHF."
+        },
+        {
+          id: "pr-redlight-boost",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "45 min",
+          inputType: "price",
+          question: "What is the price of 'Red Light + Recovery Boost Massage' (45 min)?",
+          correctAnswer: "135 CHF",
+          acceptedAnswers: ["135"],
+          options: ["135 CHF", "180 CHF", "120 CHF", "150 CHF"],
+          hint: "45-minute combo treatment priced at 135 CHF.",
+          explanation: "Red Light + Recovery Boost Massage (45 min) is 135 CHF."
+        },
+        {
+          id: "pr-redlight-full",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "70 min",
+          inputType: "price",
+          question: "What is the price of 'Red Light + Recovery Full Body Boost Massage' (70 min)?",
+          correctAnswer: "180 CHF",
+          acceptedAnswers: ["180"],
+          options: ["180 CHF", "185 CHF", "135 CHF", "195 CHF"],
+          hint: "5 CHF less than the 185 CHF treatments (Hot Stone / Body Aroma).",
+          explanation: "Red Light + Recovery Full Body Boost Massage (70 min) costs 180 CHF."
+        },
+        {
+          id: "pr-manicure",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "60/75 min",
+          inputType: "price",
+          question: "What is the price of 'Manicure' for 60 minutes (and 75 minutes)?",
+          correctAnswer: "75 CHF (85 CHF for 75 min)",
+          acceptedAnswers: ["75", "85", "75/85", "75/85 chf"],
+          options: ["75 CHF (85 CHF for 75 min)", "95 CHF (105 CHF for 75 min)", "65 CHF (75 CHF for 75 min)", "80 CHF (90 CHF for 75 min)"],
+          hint: "Manicure is 75/85 CHF (60/75 min), which is 20 CHF less than Pedicure.",
+          explanation: "Manicure is 75 CHF for 60 min and 85 CHF for 75 min."
+        },
+        {
+          id: "pr-pedicure",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "60/75 min",
+          inputType: "price",
+          question: "What is the price of 'Pedicure' for 60 minutes (and 75 minutes)?",
+          correctAnswer: "95 CHF (105 CHF for 75 min)",
+          acceptedAnswers: ["95", "105", "95/105", "95/105 chf"],
+          options: ["95 CHF (105 CHF for 75 min)", "75 CHF (85 CHF for 75 min)", "90 CHF (100 CHF for 75 min)", "85 CHF (95 CHF for 75 min)"],
+          hint: "Pedicure is 95/105 CHF for 60/75 min.",
+          explanation: "Pedicure costs 95 CHF for 60 min and 105 CHF for 75 min."
+        },
+        {
+          id: "pr-waxing",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "15/75 min",
+          inputType: "price",
+          question: "What is the price range for 'Waxing' (15/75 min)?",
+          correctAnswer: "25/90 CHF",
+          acceptedAnswers: ["25/90", "25/90 chf", "25-90", "25-90 chf"],
+          options: ["25/90 CHF", "25/75 CHF", "35/90 CHF", "50/90 CHF"],
+          hint: "Starts at 25 CHF for 15 min and goes up to 90 CHF for 75 min.",
+          explanation: "Waxing is priced at 25 CHF (15 min) up to 90 CHF (75 min)."
+        },
+        {
+          id: "pr-eyebrow-shaping",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "Beauty Finishing",
+          inputType: "price",
+          question: "What is the price of 'Augenbrauen formen / Eyebrow shaping'?",
+          correctAnswer: "25 CHF",
+          acceptedAnswers: ["25"],
+          options: ["25 CHF", "35 CHF", "30 CHF", "20 CHF"],
+          hint: "Both Eyebrow shaping and Eyebrow tinting are 25 CHF.",
+          explanation: "Augenbrauen formen / Eyebrow shaping is 25 CHF."
+        },
+        {
+          id: "pr-eyebrow-tinting",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "Beauty Finishing",
+          inputType: "price",
+          question: "What is the price of 'Augenbrauen färben / Eyebrow tinting'?",
+          correctAnswer: "25 CHF",
+          acceptedAnswers: ["25"],
+          options: ["25 CHF", "35 CHF", "40 CHF", "50 CHF"],
+          hint: "Same price as Eyebrow shaping (10 CHF less than Eyelash tinting).",
+          explanation: "Augenbrauen färben / Eyebrow tinting is 25 CHF."
+        },
+        {
+          id: "pr-eyelash-tinting",
+          category: "prices",
+          badge: "Treatments & Prices",
+          submeta: "Beauty Finishing",
+          inputType: "price",
+          question: "What is the price of 'Wimpern färben / Eyelash tinting'?",
+          correctAnswer: "35 CHF",
+          acceptedAnswers: ["35"],
+          options: ["35 CHF", "25 CHF", "45 CHF", "50 CHF"],
+          hint: "10 CHF higher than Eyebrow tinting (25 CHF).",
+          explanation: "Wimpern färben / Eyelash tinting costs 35 CHF."
+        }
+      ];
+
+      // App State
+      var activeCategory = "all";   // 'all' | 'prices' | 'hours' | 'missed'
+      var activeMode = "mc";        // 'mc' | 'type'
+      var activeDeckSize = "full";  // 'full' | 'quick'
+      var sessionQuestions = [];
+      var currentIndex = 0;
+      var score = 0;
+      var streak = 0;
+      var answeredCurrent = false;
+      var roundHistory = [];
+      var missedQuestionIds = new Set();
+      var activeModalTab = "treatments";
+      var menuSearchQuery = "";
+      var initialized = false;
+
+      function shuffleArray(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = temp;
+        }
+        return copy;
+      }
+
+      function normalizeHoursString(str) {
+        var cleaned = str.toLowerCase().trim().replace(/[–—]/g, "-").replace(/\s*(to|-)\s*/g, "-").replace(/\./g, ":");
+        var match = cleaned.match(/^(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})$/);
+        if (!match) return cleaned;
+        var h1 = match[1].length < 2 ? "0" + match[1] : match[1];
+        var m1 = match[2];
+        var h2 = match[3].length < 2 ? "0" + match[3] : match[3];
+        var m2 = match[4];
+        return h1 + ":" + m1 + "-" + h2 + ":" + m2;
+      }
+
+      function normalizePriceString(str) {
+        return str.toLowerCase().trim().replace(/chf/g, "").replace(/\s+/g, "");
+      }
+
+      function checkTypedAnswer(userInput, questionObj) {
+        var raw = userInput.trim();
+        if (!raw) return false;
+
+        if (questionObj.inputType === "hours") {
+          var normUserHours = normalizeHoursString(raw);
+          return questionObj.acceptedAnswers.some(function (ans) {
+            return normalizeHoursString(ans) === normUserHours;
+          });
+        }
+
+        if (questionObj.inputType === "price") {
+          var normUserPrice = normalizePriceString(raw);
+          return questionObj.acceptedAnswers.some(function (ans) {
+            return normalizePriceString(ans) === normUserPrice;
+          });
+        }
+
+        var normText = raw.toLowerCase().replace(/\s+/g, " ");
+        return questionObj.acceptedAnswers.some(function (ans) {
+          return ans.toLowerCase() === normText;
+        });
+      }
+
+      function initApp() {
+        if (initialized) return;
+        var elQuestionText = document.getElementById("question-text");
+        if (!elQuestionText) return;
+        initialized = true;
+
+        var elQuestionMeta = document.getElementById("question-meta");
+        var elQuestionSubmeta = document.getElementById("question-submeta");
+        var elOptionsList = document.getElementById("options-list");
+        var elTypeForm = document.getElementById("type-form");
+        var elTypeLabel = document.getElementById("type-label");
+        var elTypeInput = document.getElementById("type-input");
+        var elTypeSubmitBtn = document.getElementById("type-submit-btn");
+        var elFeedbackBox = document.getElementById("feedback-box");
+        var elFeedbackIcon = document.getElementById("feedback-icon");
+        var elFeedbackTitle = document.getElementById("feedback-title");
+        var elFeedbackRationale = document.getElementById("feedback-rationale");
+        var elHintBtn = document.getElementById("hint-btn");
+        var elHintText = document.getElementById("hint-text");
+        var elNextBtn = document.getElementById("next-btn");
+        var elLiveScore = document.getElementById("live-score");
+        var elLiveStreak = document.getElementById("live-streak");
+        var elProgressLabel = document.getElementById("progress-label");
+        var elCategoryBadge = document.getElementById("category-badge");
+        var elProgressBar = document.getElementById("progress-bar");
+        var elQuizContainer = document.getElementById("quiz-container");
+        var elSummaryContainer = document.getElementById("summary-container");
+        var elSummaryScore = document.getElementById("summary-score");
+        var elSummaryMessage = document.getElementById("summary-message");
+        var elReviewList = document.getElementById("review-list");
+        var elMissedFilterBtn = document.getElementById("missed-filter-btn");
+        var elMenuModal = document.getElementById("menu-modal");
+        var elMenuModalContent = document.getElementById("menu-modal-content");
+        var elMenuSearchInput = document.getElementById("menu-search-input");
+        var elTabTreatmentsBtn = document.getElementById("tab-treatments-btn");
+        var elTabHoursBtn = document.getElementById("tab-hours-btn");
+
+        function updateCategoryCounts() {
+          var totalCount = QUESTION_BANK.length;
+          var pricesCount = QUESTION_BANK.filter(function (q) { return q.category === "prices"; }).length;
+          var hoursCount = QUESTION_BANK.filter(function (q) { return q.category === "hours"; }).length;
+          document.getElementById("cat-all-btn").textContent = "All Items (" + totalCount + ")";
+          document.getElementById("cat-prices-btn").textContent = "Treatments & Prices (" + pricesCount + ")";
+          document.getElementById("cat-hours-btn").textContent = "Opening Hours & Rules (" + hoursCount + ")";
+        }
+
+        function updateMissedBadge() {
+          elMissedFilterBtn.textContent = "Missed Items Review (" + missedQuestionIds.size + ")";
+        }
+
+        function syncCategoryButtons() {
+          var catBtns = document.querySelectorAll(".cat-btn");
+          for (var i = 0; i < catBtns.length; i++) {
+            var b = catBtns[i];
+            var isSelected = b.getAttribute("data-cat") === activeCategory;
+            b.className = isSelected
+              ? "cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#1b2e2b] text-white"
+              : "cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#f4f1ea] text-[#1e293b] hover:bg-[#eae4d7]";
+          }
+        }
+
+        function updateStats() {
+          elLiveScore.textContent = score + " / " + sessionQuestions.length;
+          elLiveStreak.textContent = streak + " 🔥";
+          updateMissedBadge();
+        }
+
+        function buildSession(customList) {
+          var pool = customList || null;
+          if (!pool) {
+            if (activeCategory === "all") {
+              pool = shuffleArray(QUESTION_BANK);
+            } else if (activeCategory === "prices") {
+              pool = shuffleArray(QUESTION_BANK.filter(function (q) { return q.category === "prices"; }));
+            } else if (activeCategory === "hours") {
+              pool = shuffleArray(QUESTION_BANK.filter(function (q) { return q.category === "hours"; }));
+            } else if (activeCategory === "missed") {
+              var missedPool = QUESTION_BANK.filter(function (q) { return missedQuestionIds.has(q.id); });
+              if (missedPool.length > 0) {
+                pool = shuffleArray(missedPool);
+              } else {
+                pool = shuffleArray(QUESTION_BANK);
+                activeCategory = "all";
+                syncCategoryButtons();
+              }
+            }
+
+            if (activeDeckSize === "quick" && activeCategory !== "missed" && activeCategory !== "hours") {
+              pool = pool.slice(0, 15);
+            }
+          }
+
+          sessionQuestions = pool.map(function (q) {
+            var optionObjects = q.options.map(function (text, idx) {
+              return { text: text, isCorrect: idx === 0 };
+            });
+            return {
+              id: q.id,
+              category: q.category,
+              badge: q.badge,
+              submeta: q.submeta,
+              inputType: q.inputType,
+              question: q.question,
+              correctAnswer: q.correctAnswer,
+              acceptedAnswers: q.acceptedAnswers,
+              options: q.options,
+              hint: q.hint,
+              explanation: q.explanation,
+              shuffledOptions: shuffleArray(optionObjects)
+            };
+          });
+
+          currentIndex = 0;
+          score = 0;
+          streak = 0;
+          roundHistory = [];
+          elSummaryContainer.classList.add("hidden");
+          elQuizContainer.classList.remove("hidden");
+          updateStats();
+          renderQuestion();
+        }
+
+        function renderQuestion() {
+          answeredCurrent = false;
+          var q = sessionQuestions[currentIndex];
+          var pct = ((currentIndex + 1) / sessionQuestions.length) * 100;
+
+          elProgressLabel.textContent = "Question " + (currentIndex + 1) + " / " + sessionQuestions.length;
+          elCategoryBadge.textContent = q.badge;
+          elProgressBar.style.width = pct + "%";
+
+          elQuestionMeta.textContent = q.badge;
+          elQuestionSubmeta.textContent = q.submeta;
+          elQuestionText.textContent = q.question;
+
+          elFeedbackBox.classList.add("hidden");
+          elHintText.classList.add("hidden");
+          elHintText.textContent = q.hint;
+          elNextBtn.disabled = true;
+          elNextBtn.textContent = currentIndex === sessionQuestions.length - 1 ? "View Round Summary" : "Next Question →";
+
+          if (activeMode === "mc") {
+            elOptionsList.classList.remove("hidden");
+            elTypeForm.classList.add("hidden");
+            elOptionsList.innerHTML = "";
+
+            q.shuffledOptions.forEach(function (opt, i) {
+              var btn = document.createElement("button");
+              btn.type = "button";
+              btn.className = "option-card text-left p-4 rounded-xl border-2 border-[#e6e0d4] bg-[#fcfbf8] hover:border-[#c59b5f] font-semibold text-sm sm:text-base text-[#1e293b] flex items-center justify-between gap-3";
+
+              var labelSpan = document.createElement("span");
+              labelSpan.textContent = opt.text;
+
+              var keySpan = document.createElement("span");
+              keySpan.className = "text-xs font-bold px-2 py-0.5 rounded-md bg-[#efeae0] text-[#5c5346]";
+              keySpan.textContent = String.fromCharCode(65 + i);
+
+              btn.appendChild(labelSpan);
+              btn.appendChild(keySpan);
+              btn.addEventListener("click", function () {
+                handleMultipleChoice(i);
+              });
+              elOptionsList.appendChild(btn);
+            });
+          } else {
+            elOptionsList.classList.add("hidden");
+            elTypeForm.classList.remove("hidden");
+            elTypeInput.disabled = false;
+            elTypeSubmitBtn.disabled = false;
+            elTypeInput.value = "";
+
+            if (q.inputType === "hours") {
+              elTypeLabel.textContent = "Type the opening hours (e.g., 08:30-21:00 or 8:30 - 21:00)";
+              elTypeInput.placeholder = "08:30-21:00";
+            } else if (q.inputType === "price") {
+              elTypeLabel.textContent = "Type the exact price in CHF (e.g., 195 or 195 CHF)";
+              elTypeInput.placeholder = "195 CHF";
+            } else {
+              elTypeLabel.textContent = "Type your answer";
+              elTypeInput.placeholder = "e.g., Open daily or Sole Pool & Sauna";
+            }
+            setTimeout(function () { elTypeInput.focus(); }, 40);
+          }
+        }
+
+        function finalizeAnswer(isCorrect, userAnswerText) {
+          var q = sessionQuestions[currentIndex];
+          elFeedbackBox.classList.remove("hidden");
+
+          if (isCorrect) {
+            score++;
+            streak++;
+            missedQuestionIds.delete(q.id);
+            elFeedbackBox.className = "mt-6 p-4 sm:p-5 rounded-xl border border-emerald-200 bg-emerald-50";
+            elFeedbackIcon.textContent = "✅";
+            elFeedbackTitle.textContent = "Correct! (" + q.correctAnswer + ")";
+            elFeedbackTitle.className = "font-bold text-sm sm:text-base text-emerald-900";
+            elFeedbackRationale.textContent = q.explanation;
+          } else {
+            streak = 0;
+            missedQuestionIds.add(q.id);
+            elFeedbackBox.className = "mt-6 p-4 sm:p-5 rounded-xl border border-rose-200 bg-rose-50";
+            elFeedbackIcon.textContent = "❌";
+            elFeedbackTitle.textContent = "Incorrect — Correct Answer: " + q.correctAnswer;
+            elFeedbackTitle.className = "font-bold text-sm sm:text-base text-rose-900";
+            elFeedbackRationale.textContent = q.explanation;
+          }
+
+          roundHistory.push({
+            question: q.question,
+            chosenText: userAnswerText,
+            correctText: q.correctAnswer,
+            isCorrect: isCorrect,
+            originalQuestionObj: q
+          });
+
+          updateStats();
+          elNextBtn.disabled = false;
+        }
+
+        function handleMultipleChoice(selectedIdx) {
+          if (answeredCurrent) return;
+          answeredCurrent = true;
+
+          var q = sessionQuestions[currentIndex];
+          var chosen = q.shuffledOptions[selectedIdx];
+          var buttons = elOptionsList.querySelectorAll("button");
+
+          for (var idx = 0; idx < buttons.length; idx++) {
+            var btn = buttons[idx];
+            btn.disabled = true;
+            btn.classList.remove("hover:border-[#c59b5f]");
+            if (q.shuffledOptions[idx].isCorrect) {
+              btn.classList.remove("border-[#e6e0d4]", "bg-[#fcfbf8]");
+              btn.classList.add("border-emerald-600", "bg-emerald-50", "text-emerald-950");
+            } else if (idx === selectedIdx && !chosen.isCorrect) {
+              btn.classList.remove("border-[#e6e0d4]", "bg-[#fcfbf8]");
+              btn.classList.add("border-rose-500", "bg-rose-50", "text-rose-950");
+            } else {
+              btn.classList.add("opacity-60");
+            }
+          }
+
+          finalizeAnswer(chosen.isCorrect, chosen.text);
+        }
+
+        elTypeForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (answeredCurrent) return;
+          var val = elTypeInput.value.trim();
+          if (!val) return;
+
+          answeredCurrent = true;
+          elTypeInput.disabled = true;
+          elTypeSubmitBtn.disabled = true;
+
+          var q = sessionQuestions[currentIndex];
+          var isCorrect = checkTypedAnswer(val, q);
+          finalizeAnswer(isCorrect, val);
+        });
+
+        function showSummary() {
+          elQuizContainer.classList.add("hidden");
+          elSummaryContainer.classList.remove("hidden");
+          elProgressBar.style.width = "100%";
+
+          var ratio = sessionQuestions.length ? score / sessionQuestions.length : 0;
+          elSummaryScore.textContent = "Your Score: " + score + " / " + sessionQuestions.length + " (" + Math.round(ratio * 100) + "%)";
+
+          if (ratio >= 0.85) {
+            elSummaryMessage.textContent = "Outstanding! You have mastered the La Mira Spa menu, add-ons, and opening hours.";
+          } else if (ratio >= 0.6) {
+            elSummaryMessage.textContent = "Solid progress! Review any missed items below to lock in every CHF tier and closing time.";
+          } else {
+            elSummaryMessage.textContent = "Keep practicing! Open the Full Reference Menu anytime to review duration tiers and 16+ rules.";
+          }
+
+          elReviewList.innerHTML = "";
+          var wrongItems = roundHistory.filter(function (h) { return !h.isCorrect; });
+          document.getElementById("retry-wrong-btn").classList.toggle("hidden", wrongItems.length === 0);
+
+          roundHistory.forEach(function (item, idx) {
+            var div = document.createElement("div");
+            div.className = "p-3 rounded-xl border text-xs sm:text-sm " + (item.isCorrect ? "bg-emerald-50 border-emerald-200" : "bg-rose-50 border-rose-200");
+
+            var qLine = document.createElement("div");
+            qLine.className = "font-semibold text-slate-800";
+            qLine.textContent = (idx + 1) + ". " + item.question;
+
+            var ansLine = document.createElement("div");
+            ansLine.className = "mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs";
+
+            var chosenSpan = document.createElement("span");
+            chosenSpan.className = item.isCorrect ? "text-emerald-800 font-semibold" : "text-rose-800 font-semibold";
+            chosenSpan.textContent = "Your Answer: " + item.chosenText;
+            ansLine.appendChild(chosenSpan);
+
+            if (!item.isCorrect) {
+              var rightSpan = document.createElement("span");
+              rightSpan.className = "text-emerald-800 font-semibold";
+              rightSpan.textContent = "Correct: " + item.correctText;
+              ansLine.appendChild(rightSpan);
+            }
+
+            div.appendChild(qLine);
+            div.appendChild(ansLine);
+            elReviewList.appendChild(div);
+          });
+        }
+
+        function renderReferenceModal() {
+          var q = menuSearchQuery.trim().toLowerCase();
+          elMenuModalContent.innerHTML = "";
+
+          if (activeModalTab === "treatments") {
+            elTabTreatmentsBtn.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-t-xl border-b-2 border-[#1b2e2b] text-[#1b2e2b]";
+            elTabHoursBtn.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-t-xl border-b-2 border-transparent text-slate-500 hover:text-[#1b2e2b]";
+
+            var filteredTreatments = TREATMENTS_MENU.filter(function (item) {
+              return !q || item.name.toLowerCase().indexOf(q) !== -1 || item.price.toLowerCase().indexOf(q) !== -1 || item.duration.toLowerCase().indexOf(q) !== -1;
+            });
+
+            if (filteredTreatments.length === 0) {
+              var emptyT = document.createElement("p");
+              emptyT.className = "text-center text-slate-500 py-6";
+              emptyT.textContent = "No matching treatments found.";
+              elMenuModalContent.appendChild(emptyT);
+              return;
+            }
+
+            filteredTreatments.forEach(function (item, idx) {
+              var row = document.createElement("div");
+              row.className = "p-3 rounded-xl bg-[#fcfbf8] border border-[#ece6d8] flex flex-col sm:flex-row sm:items-center justify-between gap-2";
+
+              var left = document.createElement("div");
+              left.className = "font-semibold text-[#1e293b]";
+              left.textContent = (idx + 1) + ". " + item.name;
+
+              var right = document.createElement("div");
+              right.className = "flex items-center gap-2.5 shrink-0";
+
+              var durBadge = document.createElement("span");
+              durBadge.className = "px-2 py-0.5 rounded-md bg-[#efeae0] text-[#5c5346] text-xs font-medium";
+              durBadge.textContent = item.duration;
+
+              var priceBadge = document.createElement("span");
+              priceBadge.className = "font-bold text-[#1b2e2b]";
+              priceBadge.textContent = item.price;
+
+              right.appendChild(durBadge);
+              right.appendChild(priceBadge);
+              row.appendChild(left);
+              row.appendChild(right);
+              elMenuModalContent.appendChild(row);
+            });
+          } else {
+            elTabHoursBtn.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-t-xl border-b-2 border-[#1b2e2b] text-[#1b2e2b]";
+            elTabTreatmentsBtn.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-t-xl border-b-2 border-transparent text-slate-500 hover:text-[#1b2e2b]";
+
+            var filteredHours = HOURS_MENU.filter(function (item) {
+              return !q || item.area.toLowerCase().indexOf(q) !== -1 || item.hours.toLowerCase().indexOf(q) !== -1 || item.note.toLowerCase().indexOf(q) !== -1;
+            });
+
+            if (filteredHours.length === 0) {
+              var emptyH = document.createElement("p");
+              emptyH.className = "text-center text-slate-500 py-6";
+              emptyH.textContent = "No matching opening hours found.";
+              elMenuModalContent.appendChild(emptyH);
+              return;
+            }
+
+            filteredHours.forEach(function (item) {
+              var row = document.createElement("div");
+              row.className = "p-3.5 rounded-xl " + (item.restricted ? "bg-amber-50 border-amber-200" : "bg-[#fcfbf8] border-[#ece6d8]") + " border flex flex-col sm:flex-row sm:items-center justify-between gap-2";
+
+              var left = document.createElement("div");
+              var title = document.createElement("div");
+              title.className = "font-bold text-[#1e293b]";
+              title.textContent = item.area;
+              var note = document.createElement("div");
+              note.className = "text-xs text-slate-600 mt-0.5";
+              note.textContent = item.note;
+              left.appendChild(title);
+              left.appendChild(note);
+
+              var right = document.createElement("div");
+              right.className = "flex items-center gap-2 shrink-0";
+
+              if (item.restricted) {
+                var ageTag = document.createElement("span");
+                ageTag.className = "px-2 py-0.5 rounded-md bg-amber-200 text-amber-950 text-[11px] font-bold";
+                ageTag.textContent = "16+ Only";
+                right.appendChild(ageTag);
+              }
+
+              var timeTag = document.createElement("span");
+              timeTag.className = "px-2.5 py-1 rounded-lg bg-[#1b2e2b] text-[#f4f1ea] font-bold text-xs sm:text-sm";
+              timeTag.textContent = item.hours;
+              right.appendChild(timeTag);
+
+              row.appendChild(left);
+              row.appendChild(right);
+              elMenuModalContent.appendChild(row);
+            });
+          }
+        }
+
+        // Category Filter Buttons
+        var catButtons = document.querySelectorAll(".cat-btn");
+        for (var c = 0; c < catButtons.length; c++) {
+          catButtons[c].addEventListener("click", function () {
+            var chosenCat = this.getAttribute("data-cat");
+            if (chosenCat === "missed" && missedQuestionIds.size === 0) {
+              return;
+            }
+            activeCategory = chosenCat;
+            syncCategoryButtons();
+            buildSession();
+          });
+        }
+
+        // Deck Size Buttons (Full Deck vs Quick 15)
+        var sizeButtons = document.querySelectorAll(".size-btn");
+        for (var s = 0; s < sizeButtons.length; s++) {
+          sizeButtons[s].addEventListener("click", function () {
+            activeDeckSize = this.getAttribute("data-size");
+            for (var k = 0; k < sizeButtons.length; k++) {
+              var isSel = sizeButtons[k].getAttribute("data-size") === activeDeckSize;
+              sizeButtons[k].className = isSel
+                ? "size-btn px-3 py-1 rounded-lg text-xs font-bold bg-white text-[#1b2e2b] shadow-sm"
+                : "size-btn px-3 py-1 rounded-lg text-xs font-bold text-slate-600 hover:text-[#1b2e2b]";
+            }
+            buildSession();
+          });
+        }
+
+        // Quiz Mode Buttons (Multiple Choice vs Type Answer)
+        var modeButtons = document.querySelectorAll(".mode-btn");
+        for (var m = 0; m < modeButtons.length; m++) {
+          modeButtons[m].addEventListener("click", function () {
+            activeMode = this.getAttribute("data-mode");
+            for (var k = 0; k < modeButtons.length; k++) {
+              var isSel = modeButtons[k].getAttribute("data-mode") === activeMode;
+              modeButtons[k].className = isSel
+                ? "mode-btn px-3 py-1 rounded-lg text-xs font-bold bg-white text-[#1b2e2b] shadow-sm"
+                : "mode-btn px-3 py-1 rounded-lg text-xs font-bold text-slate-600 hover:text-[#1b2e2b]";
+            }
+            renderQuestion();
+          });
+        }
+
+        elHintBtn.addEventListener("click", function () {
+          elHintText.classList.toggle("hidden");
+        });
+
+        elNextBtn.addEventListener("click", function () {
+          if (currentIndex < sessionQuestions.length - 1) {
+            currentIndex++;
+            renderQuestion();
+          } else {
+            showSummary();
+          }
+        });
+
+        document.getElementById("restart-header-btn").addEventListener("click", function () {
+          buildSession();
+        });
+        document.getElementById("play-again-btn").addEventListener("click", function () {
+          buildSession();
+        });
+        document.getElementById("retry-wrong-btn").addEventListener("click", function () {
+          var wrongQs = roundHistory.filter(function (h) { return !h.isCorrect; }).map(function (h) { return h.originalQuestionObj; });
+          buildSession(wrongQs);
+        });
+
+        // Keyboard Shortcuts (1-4 / A-D for options, Enter for Next)
+        document.addEventListener("keydown", function (e) {
+          if (!elMenuModal.classList.contains("hidden")) {
+            if (e.key === "Escape") elMenuModal.classList.add("hidden");
+            return;
+          }
+          if (elQuizContainer.classList.contains("hidden")) return;
+
+          if (activeMode === "mc" && !answeredCurrent) {
+            var key = e.key.toUpperCase();
+            if (key === "1" || key === "A") handleMultipleChoice(0);
+            else if (key === "2" || key === "B") handleMultipleChoice(1);
+            else if (key === "3" || key === "C") handleMultipleChoice(2);
+            else if (key === "4" || key === "D") handleMultipleChoice(3);
+          } else if (answeredCurrent && e.key === "Enter" && !elNextBtn.disabled) {
+            e.preventDefault();
+            elNextBtn.click();
+          }
+        });
+
+        // Reference Modal Events
+        document.getElementById("toggle-menu-btn").addEventListener("click", function () {
+          renderReferenceModal();
+          elMenuModal.classList.remove("hidden");
+        });
+        document.getElementById("close-menu-btn").addEventListener("click", function () {
+          elMenuModal.classList.add("hidden");
+        });
+        elMenuModal.addEventListener("click", function (e) {
+          if (e.target === elMenuModal) elMenuModal.classList.add("hidden");
+        });
+        elTabTreatmentsBtn.addEventListener("click", function () {
+          activeModalTab = "treatments";
+          renderReferenceModal();
+        });
+        elTabHoursBtn.addEventListener("click", function () {
+          activeModalTab = "hours";
+          renderReferenceModal();
+        });
+        elMenuSearchInput.addEventListener("input", function (e) {
+          menuSearchQuery = e.target.value;
+          renderReferenceModal();
+        });
+
+        // Start first session immediately
+        updateCategoryCounts();
+        buildSession();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initApp);
+      } else {
+        initApp();
+      }
+      window.addEventListener("load", initApp);
+    })();
+  </script>
+</body>
+</html>
